@@ -10,3 +10,6 @@ To cleanly separate small-scale contributions of different scales to the total a
 
 ### Theory and Method
 See [this Overleaf document](https://www.overleaf.com/2792142214ccyzcszbdhsv)
+
+### Literature
+A compilation of the relevant literature with summaries can be found [here](literature.md).
