@@ -1,0 +1,17 @@
+name: scale-aware-air-sea
+channels:
+  - conda-forge
+  - numba
+dependencies:
+  - xarray
+  - xesmf
+  - zarr
+  - fsspec
+  - ipykernel
+  - intake
+  - numba
+  - numpy
+  - gcsfs
+  - intake-xarray
+  - matplotlib
+  
