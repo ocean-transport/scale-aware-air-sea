@@ -32,6 +32,22 @@
 - [“Coupled Ocean–Atmosphere Covariances in Global Ensemble Simulations: Impact of an Eddy-Resolving Ocean”](https://journals.ametsoc.org/view/journals/mwre/149/5/MWR-D-20-0352.1.xml) by Frolov et al, Monthly Weather Review (2021)
    - Focused on weather-scale forecasts
 
+- ["Local Air-Sea Interactions at Ocean Mesoscale and Submesoscale in a Western Boundary Current"](https://agupubs.onlinelibrary.wiley.com/doi/epdf/10.1029/2021GL097003) by Strobach et al. GRL (2022)
+   - Uses ultra high resolution, coupled model (3km ocean, 6km atmosphere) over 3 months of subdaily output
+   - Goes in depth about how winds and SST anomalies interact
+   - They show that submesoscales are important for producing a secondary circulation where latent heat increases occur over warm SST anomalies during intermittent wind events that can affect beyond the boundary layer (up to 2000km above the boundary layer)
+   - The submesoscale is important for creating these secondary circulation events.
+
+- ["Impact of resolution on the atmosphere-ocean coupling along the Gulf Stream in global high resolution models"](https://link.springer.com/content/pdf/10.1007/s00382-021-06098-9.pdf) by E.E. Tsartsali et al. Climate Dynamics (2022)
+   - They determine how horizontal resolution affects air-sea interaction over the Gulf Stream, specifically the mechanisms of vertical mixing (VMM) and pressure adjustment (PAM)
+   - They use data from 6 models (from PRIMAVERA funded) in HighResMIP, where they classify the models into 4 categories:
+      - eddy-parameterized (1 degree ocean, atm 100-250km)
+      - eddy permitting (0.25-0.4 degree ocean, 50-100km atm)
+      - eddy permitting with increased atmospheric resolution (0.25-0.4 degree ocean, 25-50km atm)
+      - eddy resolving - only 1 model (1/12 degree ocean, 50km atm)
+   - They also compare to reanalyses and observations
+   - They find that eddy-permitting with comparable atmospheric resolution is required to correctly capture the air-sea interaction in the Gulf Stream
+
 ### Papers on air-sea fluxes and bulk formulae
 - ["Wind and Buoyancy-Forced Upper Ocean"](https://www.pmel.noaa.gov/people/cronin/encycl/ms0157.pdf) by Cronin and Sprintall, Encyclopedia of Ocean Sciences (2001)
    - Great overview of surface heat and wind fluxes
