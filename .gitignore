@@ -1,1 +1,5 @@
 .ipynb_checkpoints
+dask-worker-space
+mydask.png
+__pycache__
+*.nc
