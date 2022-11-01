@@ -11,6 +11,9 @@ To cleanly separate small-scale contributions of different scales to the total a
 ### Theory and Method
 See [this Overleaf document](https://www.overleaf.com/2792142214ccyzcszbdhsv)
 
+### Paper draft for submission to GRL
+See [this Overleaf document](https://www.overleaf.com/project/635c13be574ee7d028997506)
+
 ### Collaboration
 - [Link to Miro whiteboard for brainstorming](https://miro.com/app/board/uXjVOX1Oy0k=/)
 - [Link to HackMD notes](https://hackmd.io/gTiEKcmZSqaUfwom_p4HGg)
