@@ -17,6 +17,20 @@ def smooth_inputs(da:xr.DataArray, wet_mask:xr.DataArray, dims:list, filter_scal
     out.attrs['filter_scale'] = filter_scale
     return out
 
+def smooth_inputs_dataset(ds:xr.Dataset, dims:list, filter_scale:int, timedim:str='time') -> xr.Dataset:
+    """Wrapper that filters a whole dataset, generating a wet_mask from the nanmask of the first timestep (if time is present)."""
+    ds_out = xr.Dataset()
+    for var in ds.data_vars:
+        da = ds[var]
+        if timedim in da.dims:
+            mask_da = da.isel({timedim:0})
+        else:
+            mask_da = da
+            
+        wet_mask = (~np.isnan(mask_da)).astype(int)
+        ds_out[var] = smooth_inputs(da, wet_mask, dims, filter_scale)
+    return ds_out
+
 
 
 def write_split_zarr(store, ds, split_dim='time', chunks=1, split_interval=180):
