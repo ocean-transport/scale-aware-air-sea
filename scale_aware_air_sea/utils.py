@@ -4,20 +4,36 @@ import zarr
 import gcm_filters
 import numpy as np
 
-def smooth_inputs(da:xr.DataArray, wet_mask:xr.DataArray, dims:list, filter_scale:int) -> xr.DataArray:
+def smooth_inputs(da:xr.DataArray, wet_mask:xr.DataArray, dims:list, filter_scale:int, filter_type:str='taper') -> xr.DataArray:
     """Smoothes input using gcm-filters"""
-    input_filter = gcm_filters.Filter(
-        filter_scale=filter_scale,
-        dx_min=1,
-        filter_shape=gcm_filters.FilterShape.GAUSSIAN,
-        grid_type=gcm_filters.GridType.REGULAR_WITH_LAND,
-        grid_vars={'wet_mask': wet_mask}
-    )
+    if filter_type == 'gaussian':
+        input_filter = gcm_filters.Filter(
+            filter_scale=filter_scale,
+            dx_min=1,
+            filter_shape=gcm_filters.FilterShape.GAUSSIAN,
+            grid_type=gcm_filters.GridType.REGULAR_WITH_LAND,
+            grid_vars={'wet_mask': wet_mask}
+        )
+    elif filter_type == 'taper':
+        # transition_width = np.pi/2
+        transition_width = np.pi
+        input_filter = gcm_filters.Filter(
+            filter_scale=filter_scale,
+            transition_width=transition_width,
+            dx_min=1,
+            filter_shape=gcm_filters.FilterShape.TAPER,
+            grid_type=gcm_filters.GridType.REGULAR_WITH_LAND,
+            grid_vars={'wet_mask': wet_mask}
+        )
+        
+    else:
+        raise ValueError(f"`filter_type` needs to be `gaussian` or `taper', got {filter_type}")
     out = input_filter.apply(da, dims=dims)
     out.attrs['filter_scale'] = filter_scale
+    out.attrs['filter_type'] = filter_type
     return out
 
-def smooth_inputs_dataset(ds:xr.Dataset, dims:list, filter_scale:int, timedim:str='time') -> xr.Dataset:
+def smooth_inputs_dataset(ds:xr.Dataset, dims:list, filter_scale:int, timedim:str='time', filter_type:str='taper') -> xr.Dataset:
     """Wrapper that filters a whole dataset, generating a wet_mask from the nanmask of the first timestep (if time is present)."""
     ds_out = xr.Dataset()
     
@@ -36,9 +52,10 @@ def smooth_inputs_dataset(ds:xr.Dataset, dims:list, filter_scale:int, timedim:st
     combined_wet_mask = xr.concat(wet_masks, dim='var').all('var').astype(int)
     
     for var in ds.data_vars:
-        ds_out[var] = smooth_inputs(ds[var], combined_wet_mask, dims, filter_scale)
+        ds_out[var] = smooth_inputs(ds[var], combined_wet_mask, dims, filter_scale, filter_type=filter_type)
     
     ds_out.attrs['filter_scale'] = filter_scale
+    ds_out.attrs['filter_type'] = filter_type
     return ds_out
 
 def scale_separation(ds, filter_scale, mask):
