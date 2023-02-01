@@ -8,5 +8,6 @@ dependencies:
   - pytest
   - pytest-cov
   - python
+  - tqdm
   - xarray
   - aerobulk-python
