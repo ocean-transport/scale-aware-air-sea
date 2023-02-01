@@ -1,5 +1,6 @@
 import gcm_filters
 import numpy as np
+from typing import Mapping, Any
 import xarray as xr
 import zarr
 from tqdm.auto import tqdm
@@ -141,6 +142,52 @@ def to_zarr_split(ds, mapper, split_dim="time", split_interval=1):
     # what xr.to_zarr would do
     g = zarr.open_group(mapper)
     del g[split_dim]
-
-    ds[[split_dim]].load().to_zarr(mapper, mode="a")
+    
+    ds[[split_dim]].load().to_zarr(mapper, mode='a')
     zarr.consolidate_metadata(mapper)
+    
+def weighted_coarsen(ds:xr.Dataset, dim: Mapping[Any, int],  weight_coord:str, timedim='time', **kwargs) -> xr.Dataset:
+    
+    # Check that the weights have no missing values
+    weights = ds[weight_coord]
+    if np.isnan(weights).sum()>0:
+        raise ValueError(f'Found missing values in weights coordinate ({weight_coord}). Please fill with zeros before.')
+        
+    # Make sure that the weights are matching the missing values in the input data 
+    # (otherwise creation of aggregated area will be ambigous and depend on each variable)
+    # the important thing to check is if a) all variables have the same mask and
+    variable_missing = np.isnan(ds.to_array())
+    
+    if timedim in ds.dims:
+        variable_missing = variable_missing.isel({timedim:0})
+    
+    variable_mask = variable_missing.any('variable').load() # loading because we need it multiple times
+    variable_test = variable_missing.all('variable')
+    if not variable_mask.equals(variable_test):
+        raise ValueError('Found variables with non-matching missing values. ',
+                         'Make sure that the missing values in **all** variables are in the same position.')
+    
+    # and b) if the weights have nonzero values that do not match the variables (this would lead to additional area being counted below) 
+    weights_test = weights<=0
+    if not np.allclose(variable_mask,weights_test):
+        raise ValueError(
+            'Missing values in variables are not matching locations of <=0 values in weights array. ',
+            'Please change your weights to only have missing values or zeros where variables have missing values.'
+        )
+    
+    # start the actual calculation
+    ds_coarse = ds.coarsen(**dim, **kwargs)
+    # construct internal/external dims
+    construct_kwargs = {di:(di+'_external', di+'_internal') for di in dim}
+    ds_construct = ds_coarse.construct(**construct_kwargs)
+    
+    # apply weighted mean over internal dimensions
+    weights_coarse = ds_construct[weight_coord]
+    aggregate_dims = [di+'_internal' for di in dim]
+    ds_out = ds_construct.weighted(weights_coarse).mean(aggregate_dims)
+    
+    # add new area that corresponds to the area that was used for each coarse cell
+    ds_out = ds_out.assign_coords(**{weight_coord:weights_coarse.sum(aggregate_dims)})
+    
+    # rename to original names and return
+    return ds_out.rename({di+'_external': di for di in dim})
