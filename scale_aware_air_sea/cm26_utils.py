@@ -107,9 +107,16 @@ def load_and_combine_cm26(filesystem: gcsfs.GCSFileSystem, inline_array=False)->
     print('Mask nans')
     # atmos missing values are filled with 0s, which causes issues with the filtering
     # Ideally this should be masked before the regridding, but xesmf fills with 0 again...
-    mask = ~np.isnan(ds_merged['surface_temp'])
-    for mask_var in ['slp', 't_ref', 'q_ref']:
+    mask = ~np.isnan(ds_merged['surface_temp'].isel(time=0).reset_coords(drop=True))
+    for mask_var in ['slp', 't_ref', 'q_ref', 'v_ref', 'u_ref', 'wind']:
         ds_merged[mask_var] = ds_merged[mask_var].where(mask)
+    
+    
+    # also apply this mask to certain coordinates from the grid dataset (for now only tracer_area since that 
+    for mask_coord in ['area_t']:
+        ds_merged.coords[mask_coord] = ds_oc_grid[mask_coord].where(mask,0.0).astype(np.float64)
+    # The casting to float64 is needed to avoid that weird bug where the manual global weighted ave
+    # is not close to the xarray weighted mean (I was not able to reproduce this with an example)
     
     # Calculate relative wind
     print('Calculate relative wind')
