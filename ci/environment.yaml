@@ -2,6 +2,7 @@ name: test_env_scale_aware_air_sea
 channels:
   - conda-forge
 dependencies:
+  - aerobulk-python
   - codecov
   - numpy
   - pip
@@ -10,4 +11,4 @@ dependencies:
   - python
   - tqdm
   - xarray
-  - aerobulk-python
+  - zarr
