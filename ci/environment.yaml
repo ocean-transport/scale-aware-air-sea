@@ -4,6 +4,7 @@ channels:
 dependencies:
   - aerobulk-python
   - codecov
+  - gcm_filters
   - numpy
   - pip
   - pytest
