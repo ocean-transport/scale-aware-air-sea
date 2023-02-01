@@ -1,5 +1,5 @@
 # scale-aware-air-sea
-Repo for collaborative project on scale-aware air-sea fluxes in global climate models
+Repo for collaborative project on scale-aware air-sea fluxes in global high resolution climate models
 
 ### Project goal
 To cleanly separate small-scale contributions of different scales to the total air-sea flux of heat, freshwater, etc.
