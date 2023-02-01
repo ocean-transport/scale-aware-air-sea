@@ -31,7 +31,7 @@ def load_and_combine_cm26(
         {"time": 3}
     )
     mapper = filesystem.get_mapper("gs://cmip6/GFDL_CM2_6/grid")
-    xr.open_dataset(mapper, chunks={}, **kwargs)
+    ds_oc_grid = xr.open_dataset(mapper, chunks={}, **kwargs)
     # ds_oc_grid  = cat["GFDL_CM2_6_grid"].to_dask()
 
     print("Align in time")
