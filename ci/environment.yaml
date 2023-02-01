@@ -4,7 +4,11 @@ channels:
 dependencies:
   - aerobulk-python
   - codecov
+#   - esmpy
   - gcm_filters
+  - fsspec
+  - gcsfs
+  - intake-esm
   - numpy
   - pip
   - pytest
@@ -12,4 +16,5 @@ dependencies:
   - python
   - tqdm
   - xarray
+  - xesmf
   - zarr
