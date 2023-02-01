@@ -35,3 +35,10 @@ extend-exclude = ["notebooks"]
 fix = true
 
 target-version = "py310"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-vv"
+testpaths = [
+    "tests",
+]
