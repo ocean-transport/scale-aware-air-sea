@@ -1,0 +1,12 @@
+name: test_env_scale_aware_air_sea
+channels:
+  - conda-forge
+dependencies:
+  - codecov
+  - numpy
+  - pip
+  - pytest
+  - pytest-cov
+  - python
+  - xarray
+  - aerobulk-python
