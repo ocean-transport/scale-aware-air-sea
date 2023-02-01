@@ -35,7 +35,7 @@ jobs:
           cache-downloads: true
           cache-env: true
           micromamba-version: 'latest'
-          environment-file: ci/environment.yml
+          environment-file: ci/environment.yaml
           extra-specs: |
             python=${{ matrix.python-version }}
       - name: Install SAAS
