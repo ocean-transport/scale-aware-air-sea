@@ -114,7 +114,27 @@ def test_weights_nan():
     with pytest.raises(ValueError, match='Found missing values in weights coordinate '):
         weighted_coarsen(ds, {'x':2, 'y':2}, 'area')
         
+
+def test_preserve_integral():
+    data_full = np.random.rand(4,4, 10)
+    data_2_full = np.random.rand(4,4, 10)
     
+    weights_full = np.random.rand(4,4)
+    
+    ds = xr.Dataset({
+        'data1':xr.DataArray(data_full, dims=['x','y', 'time']),
+        'data2':xr.DataArray(data_2_full, dims=['x','y', 'time']),
+    }, 
+        coords={'area':(['x','y'],weights_full)},
+    )
+
+    ds_coarse = weighted_coarsen(ds, {'x':2, 'y':2}, 'area')
+    
+    # We expect the weighted mean of both the original and coarsened dataset to stay the same
+    mean_fine = ds.weighted(ds.area).mean(['x','y'])
+    mean_coarse = ds_coarse.weighted(ds_coarse.area).mean(['x','y'])
+    
+    xr.testing.assert_allclose(mean_fine, mean_coarse)
     
     
     
