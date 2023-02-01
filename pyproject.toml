@@ -21,6 +21,17 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-[project.urls]
-"Homepage" = "https://github.com/pypa/sampleproject"
-"Bug Tracker" = "https://github.com/pypa/sampleproject/issues"
+[tool.black]
+force-exclude = true
+extend-exclude = '^(notebooks/|other/folder/)'
+
+
+[tool.ruff]
+# Exclude directories
+force-exclude = true
+extend-exclude = ["notebooks"]
+
+# auto fix issues
+fix = true
+
+target-version = "py310"

@@ -6,7 +6,7 @@
    - They find that winds contribute to “ocean eddy killing” (I.e. removes energy from eddies) at length scales of 260 km and shorter
    - Eddy killing happens at essentially all time scales, but has seasonality (peaks in winter)
 
-- ["Disentangling the Mesoscale Ocean-Atmosphere Interactions"](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2018JC014628) by Renault et al., JGR Oceans (2019) 
+- ["Disentangling the Mesoscale Ocean-Atmosphere Interactions"](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2018JC014628) by Renault et al., JGR Oceans (2019)
    - They look at how to separate out the current feedback (CFB) from thermal feedback (TFB) of ocean mesoscales on surface stress and winds.
    - They also find that scatterometer data has some biases, primarily since it measures 10m atmosphere winds as “equivalent neutral stability wind” (ENW), which does not correspond to the atmosphere 10m winds in models. Furthermore, the ENW from scatterometers is measured relative to surface currents rather than absolute ENW. The scatterometer wind data may therefore have biases when considering air-sea feedbacks onto surface winds. Surface stress is a better measurement to use from scatterometers.
 
