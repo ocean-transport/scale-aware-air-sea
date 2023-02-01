@@ -2,6 +2,7 @@ import json
 import pytest
 
 import dask.array as dsa
+import numpy as np
 import xarray as xr
 
 from scale_aware_air_sea.utils import to_zarr_split, weighted_coarsen
