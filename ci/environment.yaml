@@ -1,0 +1,21 @@
+name: test_env_scale_aware_air_sea
+channels:
+  - conda-forge
+  - numba
+dependencies:
+  - aerobulk-python
+  - codecov
+  - esmpy
+  - gcm_filters
+  - fsspec
+  - gcsfs
+  - intake-esm
+  - numpy
+  - pip
+  - pytest
+  - pytest-cov
+  - python
+  - tqdm
+  - xarray
+  - xesmf
+  - zarr
