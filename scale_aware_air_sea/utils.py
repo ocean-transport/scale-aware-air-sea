@@ -6,6 +6,16 @@ import zarr
 from tqdm.auto import tqdm
 
 
+def open_zarr(mapper, chunks={}):
+    return xr.open_dataset(
+        mapper, 
+        engine='zarr',
+        chunks=chunks,
+        consolidated=True,
+        inline_array=True
+    )
+
+
 def smooth_inputs(
     da: xr.DataArray,
     wet_mask: xr.DataArray,
@@ -188,6 +198,11 @@ def weighted_coarsen(ds:xr.Dataset, dim: Mapping[Any, int],  weight_coord:str, t
     
     # add new area that corresponds to the area that was used for each coarse cell
     ds_out = ds_out.assign_coords(**{weight_coord:weights_coarse.sum(aggregate_dims)})
+    
+    # add other coordinates back
+    coords_to_treat = [co for co in ds.coords if co != weight_coord and co not in ds_out.coords]
+    treated_coords = {co:ds[co].coarsen({k:v for k,v in dim.items() if k in ds[co].dims}).mean() for co in coords_to_treat}
+    ds_out = ds_out.assign_coords(**treated_coords)
     
     # rename to original names and return
     return ds_out.rename({di+'_external': di for di in dim})
