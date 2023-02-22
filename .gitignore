@@ -5,3 +5,4 @@ __pycache__
 *.nc
 *.egg-info
 *.mp4
+build/
