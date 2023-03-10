@@ -16,14 +16,14 @@ def open_zarr(mapper, chunks={}):
     )
 
 
-def smooth_inputs(
+def filter_inputs(
     da: xr.DataArray,
     wet_mask: xr.DataArray,
     dims: list,
     filter_scale: int,
     filter_type: str = "taper",
 ) -> xr.DataArray:
-    """Smoothes input using gcm-filters"""
+    """filteres input using gcm-filters"""
     if filter_type == "gaussian":
         input_filter = gcm_filters.Filter(
             filter_scale=filter_scale,
@@ -54,7 +54,7 @@ def smooth_inputs(
     return out
 
 
-def smooth_inputs_dataset(
+def filter_inputs_dataset(
     ds: xr.Dataset,
     dims: list,
     filter_scale: int,
@@ -79,7 +79,7 @@ def smooth_inputs_dataset(
     combined_wet_mask = xr.concat(wet_masks, dim="var").all("var").astype(int)
 
     for var in ds.data_vars:
-        ds_out[var] = smooth_inputs(
+        ds_out[var] = filter_inputs(
             ds[var], combined_wet_mask, dims, filter_scale, filter_type=filter_type
         )
 
@@ -89,13 +89,13 @@ def smooth_inputs_dataset(
 
 
 def scale_separation(ds, filter_scale, mask):
-    ds_filtered = smooth_inputs_dataset(ds, ["yt_ocean", "xt_ocean"], filter_scale)
+    ds_filtered = filter_inputs_dataset(ds, ["yt_ocean", "xt_ocean"], filter_scale)
 
-    all_smoothing_options_except_full = [
-        s for s in ds.smoothing.data if "full" not in s
+    all_filtering_options_except_full = [
+        s for s in ds.filtering.data if "full" not in s
     ]
 
-    diff_filtered = ds_filtered.sel(smoothing="smooth_full") - ds_filtered.sel(
+    diff_filtered = ds_filtered.sel(filtering="smooth_full") - ds_filtered.sel(
         smoothing=all_smoothing_options_except_full
     )
     diff_unfiltered = ds_filtered.sel(smoothing="smooth_full") - ds.sel(
