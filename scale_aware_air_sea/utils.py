@@ -23,7 +23,7 @@ def filter_inputs(
     filter_scale: int,
     filter_type: str = "taper",
 ) -> xr.DataArray:
-    """filteres input using gcm-filters"""
+    """filters input using gcm-filters"""
     if filter_type == "gaussian":
         input_filter = gcm_filters.Filter(
             filter_scale=filter_scale,

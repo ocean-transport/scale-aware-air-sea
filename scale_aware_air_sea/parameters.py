@@ -22,7 +22,7 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
                 'coarse_decomposition_monthly': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_monthly_{n_coarsen}_{version_full}.zarr",
                 'filter_decomposition_mean': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_mean_{version_full}.zarr",
                 'coarse_decomposition_mean': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_mean_{n_coarsen}_{version_full}.zarr",
-            } for model in ['CM26']
+            } for model in ['CM26','CESM']
         }
     }
     return global_params
