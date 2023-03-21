@@ -11,12 +11,14 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
         'version': version_full,
         'paths':{
             model:{
+                'ice_mask' : f"{bucket}/scale-aware-air-sea/preprocessed/ice_mask_{model}_{version_full}.zarr",
                 'scratch': f"{scratch}/scale-aware-air-sea/temp/{model}_{version_full}.zarr",
                 'filter': f"{bucket}/scale-aware-air-sea/preprocessed/{model}_filter_{version_full}.zarr",
                 'coarse': f"{bucket}/scale-aware-air-sea/preprocessed/{model}_coarse_{n_coarsen}_{version_full}.zarr",
                 'filter_fluxes': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_{version_full}.zarr", 
                 'coarse_fluxes': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_{n_coarsen}_{version_full}.zarr",
                 'filter_decomposition_daily': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_daily_{version_full}.zarr",
+                'filter_decomposition_daily_appendix': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_daily_appendix_{version_full}.zarr",
                 'coarse_decomposition_daily': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_daily_{n_coarsen}_{version_full}.zarr",
                 'filter_decomposition_monthly': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_monthly_{version_full}.zarr",
                 'coarse_decomposition_monthly': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_monthly_{n_coarsen}_{version_full}.zarr",
