@@ -17,7 +17,7 @@ def load_and_combine_cm26(
     """
     kwargs = dict(
         consolidated=True, use_cftime=True, inline_array=inline_array, engine="zarr"
-    )  # ,
+    )
     print("Load Data")
     mapper = filesystem.get_mapper("gs://cmip6/GFDL_CM2_6/control/surface")
     ds_ocean = xr.open_dataset(mapper, chunks={"time": 3}, **kwargs)

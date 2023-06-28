@@ -4,6 +4,7 @@ from typing import Mapping, Any
 import xarray as xr
 import zarr
 from tqdm.auto import tqdm
+from .cm26_utils import load_and_combine_cm26
 
 
 def open_zarr(mapper, chunks={}):
@@ -15,6 +16,21 @@ def open_zarr(mapper, chunks={}):
         inline_array=True
     )
 
+def maybe_write_to_temp_and_reload(fs, path, version):
+    if not fs.exists(path):
+        print('Recreating temp store from scratch')
+        ds_raw  = load_and_combine_cm26(fs, inline_array=True)
+        #TODO: This shoud accomodate CESM
+
+        # Only process a small dataset if the version is a test
+        if 'test' in version:
+            ds_raw = ds_raw.isel(time=slice(0,300))
+
+        ds_raw.to_zarr(path) # this streams just fine 🎉
+    
+    # Reload from the temp store
+    ds = open_zarr(path)
+    return ds
 
 def filter_inputs(
     da: xr.DataArray,
