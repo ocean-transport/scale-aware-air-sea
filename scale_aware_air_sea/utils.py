@@ -16,11 +16,16 @@ def open_zarr(mapper, chunks={}):
         inline_array=True
     )
 
-def maybe_write_to_temp_and_reload(fs, path, version):
+def maybe_write_to_temp_and_reload(fs, path, version, model):
     if not fs.exists(path):
         print('Recreating temp store from scratch')
-        ds_raw  = load_and_combine_cm26(fs, inline_array=True)
         #TODO: This shoud accomodate CESM
+        if model == 'CM26':
+            ds_raw = load_and_combine_cm26(fs, inline_array=True)
+        elif model == 'CESM':
+            ds_raw = load_and_combine_cesm(fs, inline_array=True)
+        else:
+            raise
 
         # Only process a small dataset if the version is a test
         if 'test' in version:
