@@ -43,6 +43,14 @@ def filter_inputs(
             grid_type=gcm_filters.GridType.REGULAR_WITH_LAND,
             grid_vars={"wet_mask": wet_mask},
         )
+    elif filter_type == "tripolar_pop":
+        input_filter = gcm_filters.Filter(
+            filter_scale=filter_scale,
+            dx_min=1,
+            filter_shape=gcm_filters.FilterShape.GAUSSIAN,
+            grid_type=gcm_filters.GridType.TRIPOLAR_REGULAR_WITH_LAND_AREA_WEIGHTED,
+            grid_vars={"area":da.TAREA,"wet_mask": wet_mask},
+        )
 
     else:
         raise ValueError(
