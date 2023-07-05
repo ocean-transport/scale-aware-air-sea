@@ -23,7 +23,7 @@ def filter_inputs(
     filter_scale: int,
     filter_type: str = "taper",
 ) -> xr.DataArray:
-    """filteres input using gcm-filters"""
+    """filters input using gcm-filters"""
     if filter_type == "gaussian":
         input_filter = gcm_filters.Filter(
             filter_scale=filter_scale,
@@ -42,6 +42,14 @@ def filter_inputs(
             filter_shape=gcm_filters.FilterShape.TAPER,
             grid_type=gcm_filters.GridType.REGULAR_WITH_LAND,
             grid_vars={"wet_mask": wet_mask},
+        )
+    elif filter_type == "tripolar_pop":
+        input_filter = gcm_filters.Filter(
+            filter_scale=filter_scale,
+            dx_min=1,
+            filter_shape=gcm_filters.FilterShape.GAUSSIAN,
+            grid_type=gcm_filters.GridType.TRIPOLAR_REGULAR_WITH_LAND_AREA_WEIGHTED,
+            grid_vars={"area":da.TAREA,"wet_mask": wet_mask},
         )
 
     else:
