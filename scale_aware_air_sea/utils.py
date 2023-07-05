@@ -195,7 +195,10 @@ def weighted_coarsen(ds:xr.Dataset, dim: Mapping[Any, int],  weight_coord:str, t
     
     # and b) if the weights have nonzero values that do not match the variables (this would lead to additional area being counted below) 
     weights_test = weights<=0
-    if not np.allclose(variable_mask,weights_test):
+    
+    a = variable_mask.squeeze(drop=True)
+    b = weights_test.squeeze(drop=True)
+    if not np.allclose(a, b.transpose(*a.dims)): # need to transpose this, which too me still seems un xarray-like (I discussed this in an issue once, but whatever).
         raise ValueError(
             'Missing values in variables are not matching locations of <=0 values in weights array. ',
             'Please change your weights to only have missing values or zeros where variables have missing values.'
