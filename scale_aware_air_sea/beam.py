@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import apache_beam as beam
 
+input_data = [("cesm", "cesm_ds"), ("cm26", "cm26_ds")]
+
 
 def append_val(t: tuple, val: str) -> tuple:
     k, v = t
@@ -54,3 +56,8 @@ class AirSeaPaper(beam.PTransform):
         a_bf_cf = nested | "mix 2" >> MixVariables(spec="a,bf,cf")
         fluxes = (a_b_c, a_b_cf, a_bf_cf) | beam.Flatten() | XBeamComputeFluxes()
         return fluxes
+
+
+if __name__ == "__main__":
+    with beam.Pipeline() as p:
+        p | beam.Create(input_data) | AirSeaPaper() | beam.Map(print)
