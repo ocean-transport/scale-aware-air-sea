@@ -4,7 +4,9 @@ from typing import Mapping, Any
 import xarray as xr
 import zarr
 from tqdm.auto import tqdm
+import gcsfs
 from .cm26_utils import load_and_combine_cm26
+from .cesm_utils import load_and_combine_cesm
 
 
 def open_zarr(mapper, chunks={}):
@@ -16,6 +18,23 @@ def open_zarr(mapper, chunks={}):
         inline_array=True
     )
 
+def maybe_save_and_reload(ds, path, overwrite=False, fs=None):
+    if fs is None:
+        fs = gcsfs.GCSFileSystem()
+    
+    if not fs.exists(path):
+        print(f'Saving the dataset to zarr at {path}')
+        ds.to_zarr(path)
+    elif fs.exists(path) and overwrite:
+        print(f'Overwriting dataset at {path}')
+        ds.to_zarr(path, mode='w')
+    
+    print(f"Reload dataset from {path}")
+    ds_reloaded = xr.open_dataset(path, engine='zarr', chunks={})
+    return ds_reloaded
+        
+    
+# FIXME: This should include the icemask
 def maybe_write_to_temp_and_reload(fs, path, version, model):
     if not fs.exists(path):
         print('Recreating temp store from scratch')
