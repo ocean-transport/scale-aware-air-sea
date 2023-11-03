@@ -40,10 +40,12 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
                          'native':{
                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_prod.zarr",
                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_appendix.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_all_terms.zarr",
                          },
                          'mean':{
                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_prod.zarr",
                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_appendix.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_all_terms.zarr",
                          },
                      
                      },
@@ -51,10 +53,12 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
                          'native':{
                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_native_prod_{n_coarsen}.zarr",
                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_native_appendix_{n_coarsen}.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_native_all_terms.zarr",
                          },
                          'mean':{
                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_mean_prod_{n_coarsen}.zarr",
                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_mean_appendix_{n_coarsen}.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_mean_all_terms.zarr",
                          },
                      
                      },
