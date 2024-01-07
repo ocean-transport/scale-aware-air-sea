@@ -63,8 +63,6 @@ def load_cesm_data(fs: gcsfs.GCSFileSystem) -> tuple[xr.Dataset, xr.Dataset]:
     
     return ds_ocean, ds_atmos
 
-
-
 def load_cm26_data(fs: gcsfs.GCSFileSystem) -> tuple[xr.Dataset, xr.Dataset]:
     kwargs = dict(consolidated=True, use_cftime=True, engine="zarr")
     
@@ -72,14 +70,11 @@ def load_cm26_data(fs: gcsfs.GCSFileSystem) -> tuple[xr.Dataset, xr.Dataset]:
     ocean_path = "gs://cmip6/GFDL_CM2_6/control/surface"
     ds_ocean = xr.open_dataset(fs.get_mapper(ocean_path), chunks={"time": 3}, **kwargs)
     
-    ocean_boundary_path = "gs://cmip6/GFDL_CM2_6/control/ocean_boundary"
-    ds_ocean_boundary = xr.open_dataset(fs.get_mapper(ocean_boundary_path), chunks={"time": 3}, **kwargs)
-    
     grid_path = "gs://cmip6/GFDL_CM2_6/grid"
     ds_ocean_grid = xr.open_dataset(fs.get_mapper(grid_path), chunks={}, **kwargs)
     
     # combine all dataset on the ocean grid together
-    ds_ocean = xr.merge([ds_ocean_grid, ds_ocean, ds_ocean_boundary], compat='override')
+    ds_ocean = xr.merge([ds_ocean_grid, ds_ocean], compat='override')
 
     # xarray says not to do this
     # ds_atmos = xr.open_zarr('gs://cmip6/GFDL_CM2_6/control/atmos_daily.zarr', chunks={'time':1}, **kwargs) # noqa: E501
@@ -142,54 +137,18 @@ def regrid_atmos(ds_ocean: xr.Dataset, ds_atmos: xr.Dataset) -> xr.Dataset:
         unmapped_to_nan=True # I think i need to cut out the lon/lat values before this! Might save some .where()'s later
     )
     return regridder(ds_atmos)
-
-def test_data_preprocessing(ds:xr.Dataset, full_check=False):
-    # check that no nans are in the lon/lat fields (warn only, I think we do not have any without nans atm)
-    # Note. Actually this might be useful for the regridding (and masking within), but we should be able to attache fully filled lon/lats for later plotting.
-    
-    # check that all variables are on the tracer point
-    for va in ds.data_vars:
-        assert set(ds[va].dims) == set(['time', 'xt_ocean', 'yt_ocean'])
-    
-    # check that necessary coordinates are included
-    for co in ['ice_mask', 'area_t', 'geolon_t', 'geolat_t']:
-        assert co in ds.coords
-        
-    # Range check on naive global mean for variables
-    ranges = {
-        'surface_temp':[270, 310],
-        'q_ref':[0.005, 0.02],
-        'slp': [100000, 110000],
-        't_ref': [270, 310],
-        'u_ocean': [0.05, 2],
-        'v_ocean': [0.05, 2],
-        'u_relative' : [1, 20],
-        'v_relative' : [1, 20],
-        'u_ref' : [1, 20], 
-        'v_ref' : [1, 20],
-        'area_t': [5e7, 2e8],
-    }
-    range_test_ds = ds.isel(time=random.randint(0, len(ds.time))).load()
-    for va, r in ranges.items():
-        test_val = abs(range_test_ds[va]).quantile(0.75).data
-        if not (test_val >= r[0] and test_val <= r[1]):
-            raise ValueError(f"{va =} failed the range test. Got value={val} and range={r}")
-    
-    # TODO: Check the proper units?
-
-    if full_check:
-        # test that there are no all nan maps anywhere
-        nan_test = np.isnan(ds).all(['xt_ocean', 'yt_ocean']).to_array().sum()
-        assert nan_test.data == 0
-        
-        
-    # finally check that each variable has nans in the same position
-    a = np.isnan(ds.surface_temp.isel(time=0, drop=True)).load()
-    b = np.isnan(ds.isel(time=0, drop=True).to_array()).all('variable').load()
-    xr.testing.assert_allclose(a,b)
     
     
-def preprocess(fs: gcsfs.GCSFileSystem, model:str) -> xr.Dataset:    
+def construct_ice_mask(ds:xr.Dataset) -> xr.DataArray:
+        # Define Ice mask (TODO: raise issue discussing this)
+    # I am choosing to use the same temp criterion here for both models. 
+    # We should add an appendix looking at the global difference between 
+    # using a time resolved vs maximally excluding ice_mask (e.g. max extent over a year)
+    # I prototyped another method using the melt rate.
+    # But the computation is super gnarly (see pipeline/step_00_ice_mask_brute_force_cm2.6.ipynb).
+    return ds.surface_temp > 273.15
+    
+def preprocess(fs: gcsfs.GCSFileSystem, model:str, include_fluxes:bool=False) -> xr.Dataset:
     # loading data
     print(f"{model}: Loading Data")
     if model == 'CM26':
@@ -209,13 +168,7 @@ def preprocess(fs: gcsfs.GCSFileSystem, model:str) -> xr.Dataset:
         exclude=(di for di in all_dims if di != "time"),
     )
     
-    # Define Ice mask (TODO: raise issue discussing this)
-    # I am choosing to use the same temp criterion here for both models. 
-    # We should add an appendix looking at the global difference between 
-    # using a time resolved vs maximally excluding ice_mask (e.g. max extent over a year)
-    # I prototyped another method using the melt rate.
-    # But the computation is super gnarly (see pipeline/step_00_ice_mask_brute_force_cm2.6.ipynb).
-    ds_ocean.coords['ice_mask'] = ds_ocean.surface_temp > 273.15
+    ds_ocean.coords['ice_mask'] = construct_ice_mask(ds_ocean)
     
     # regrid atmospheric data
     print(f"{model}: Regridding atmosphere (this takes a while, because we are computing the weights on the fly)")
@@ -232,13 +185,21 @@ def preprocess(fs: gcsfs.GCSFileSystem, model:str) -> xr.Dataset:
     ds_ocean.coords['geolon_t'].data = lon_masked.data
     ds_ocean.coords['geolat_t'].data = lat_masked.data
     ds_ocean.coords['area_t'].data = area_masked.data
+
     ds_atmos_regridded = regrid_atmos(ds_ocean, ds_atmos)
     
     # merge data on the ocean grid (and discard variables not needed for analysis)
     print(f"{model}: Merging on ocean tracer grid")
     atmos_vars = ["slp", "v_ref", "u_ref", "t_ref", "q_ref"]
     ocean_vars = ["surface_temp", "u_ocean", "v_ocean"]
-    ds_combined = xr.merge([ds_ocean[ocean_vars], ds_atmos_regridded[atmos_vars]])
+    if include_fluxes:
+        if model == 'CESM':
+            atmos_vars = atmos_vars + ['LHFLX', 'SHFLX']
+        else:
+            raise
+            
+    merge_datasets = [ds_ocean[ocean_vars], ds_atmos_regridded[atmos_vars]]
+    ds_combined = xr.merge(merge_datasets)
     
     # Calculate relative wind
     print(f"{model}: Calculate relative wind")

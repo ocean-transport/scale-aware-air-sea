@@ -28,3 +28,11 @@ def fill_da(da: xr.DataArray) -> xr.DataArray:
     filled_data = fill(data, np.isnan(data))
     da.data = filled_data
     return da
+
+def centered_shrink_axes(ax, factor):
+    bbox = ax.get_position()
+    left = bbox.x0+(bbox.width*factor/2)
+    bottom = bbox.y0+(bbox.height*factor/2)
+    width = bbox.width * factor
+    height = bbox.height * factor
+    ax.set_position([left, bottom, width, height])

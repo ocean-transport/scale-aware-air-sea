@@ -5,8 +5,6 @@ import xarray as xr
 import zarr
 from tqdm.auto import tqdm
 import gcsfs
-from .cm26_utils import load_and_combine_cm26
-from .cesm_utils import load_and_combine_cesm
 
 
 def open_zarr(mapper, chunks={}):
@@ -32,29 +30,6 @@ def maybe_save_and_reload(ds, path, overwrite=False, fs=None):
     print(f"Reload dataset from {path}")
     ds_reloaded = xr.open_dataset(path, engine='zarr', chunks={})
     return ds_reloaded
-        
-    
-# FIXME: This should include the icemask
-def maybe_write_to_temp_and_reload(fs, path, version, model):
-    if not fs.exists(path):
-        print('Recreating temp store from scratch')
-        #TODO: This shoud accomodate CESM
-        if model == 'CM26':
-            ds_raw = load_and_combine_cm26(fs, inline_array=True)
-        elif model == 'CESM':
-            ds_raw = load_and_combine_cesm(fs, inline_array=True)
-        else:
-            raise
-
-        # Only process a small dataset if the version is a test
-        if 'test' in version:
-            ds_raw = ds_raw.isel(time=slice(0,300))
-
-        ds_raw.to_zarr(path) # this streams just fine 🎉
-    
-    # Reload from the temp store
-    ds = open_zarr(path)
-    return ds
 
 def filter_inputs(
     da: xr.DataArray,
