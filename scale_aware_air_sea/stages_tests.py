@@ -69,8 +69,6 @@ def test_smoothed_data(ds_raw, ds, plot=False, full_check=False):
     if ds.attrs['smoothing_method'] == 'coarse':
         assert 'n_coarsen' in ds.attrs.keys()
         
-        ds_raw = data_preprocessing[model]
-        
         # Test that raw and coarse datasets preserver the global mean tracer value
         # This ensures that both the values and the coarsened area are calculated consistently
         test_var = 'surface_temp'
