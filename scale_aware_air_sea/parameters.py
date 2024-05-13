@@ -62,7 +62,29 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
                          },
                      
                      },
-                }
+                },
+                'plotting':
+                {
+                    'max_ice_mask': f"{bucket}/{project_path}/{version_full}/plotting/{model}_max_ice_mask.zarr",
+                    'full_fluxes':{ 
+                        k: {
+                            kk:f"{bucket}/{project_path}/{version_full}/plotting/{model}_full_flux_{k}_{kk}.zarr" for kk in ['global_mean', 'time_mean']
+                        } for k in ['online', 'offline']
+                    },
+#                     'filter':{
+#                          'native':{
+#                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_prod.zarr",
+#                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_appendix.zarr",
+#                              'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_all_terms.zarr",
+#                          },
+#                          'mean':{
+#                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_prod.zarr",
+#                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_appendix.zarr",
+#                              'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_all_terms.zarr",
+#                          },
+                     
+#                      },
+                },
             } for model in ['CM26','CESM']
         }
     }
