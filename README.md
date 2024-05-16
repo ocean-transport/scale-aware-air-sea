@@ -1,25 +1,20 @@
 # scale-aware-air-sea
-Repo for collaborative project on scale-aware air-sea fluxes in global climate models
+This repository is both an installable package, and a collection of issues/notebooks that document the work done in the ocean-transport group and beyond.
+The goal of this project is to quantify the rectified effect of small scale heterogeneity in the atmophere and ocean on the air-sea fluxes computed via bulk formulae.
 
-### Project goal
-To cleanly separate small-scale contributions of different scales to the total air-sea flux of heat, freshwater, etc.
+## Publications
+Coming Soon
 
-### Project steps
-- apply spatial filters to air-sea fluxes (use [gcmfilters](https://gcm-filters.readthedocs.io/en/latest/)) to remove small-scales
-- compare air-sea fluxes of full and filtered fields
+## Quickstart
 
-### Theory and Method
-See [this Overleaf document](https://www.overleaf.com/2792142214ccyzcszbdhsv)
+### Installation
+You can install this package by cloning it locally, navigating to the repository and runnning
+```
+pip install .
+```
 
-### Paper draft for submission to GRL
-See [this Overleaf document](https://www.overleaf.com/project/635c13be574ee7d028997506)
-
-### Collaboration
-- [Link to Miro whiteboard for brainstorming](https://miro.com/app/board/uXjVOX1Oy0k=/)
-- [Link to HackMD notes](https://hackmd.io/gTiEKcmZSqaUfwom_p4HGg)
-
-### Literature
-A compilation of the relevant literature with summaries can be found [here](literature.md).
-
-### Other Resources
-Paige's [slides](https://drive.google.com/drive/folders/1HvKmhfCWfT4FUNU5ZgwSebO7Rq6yse3c?usp=sharing) on air-sea background
+### How to develop this package
+Follow the above instructions but install the package via
+```
+pip install -e ".[dev]"
+```

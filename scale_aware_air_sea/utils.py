@@ -4,6 +4,7 @@ from typing import Mapping, Any
 import xarray as xr
 import zarr
 from tqdm.auto import tqdm
+import gcsfs
 
 
 def open_zarr(mapper, chunks={}):
@@ -15,6 +16,20 @@ def open_zarr(mapper, chunks={}):
         inline_array=True
     )
 
+def maybe_save_and_reload(ds, path, overwrite=False, fs=None):
+    if fs is None:
+        fs = gcsfs.GCSFileSystem()
+    
+    if not fs.exists(path):
+        print(f'Saving the dataset to zarr at {path}')
+        ds.to_zarr(path)
+    elif fs.exists(path) and overwrite:
+        print(f'Overwriting dataset at {path}')
+        ds.to_zarr(path, mode='w')
+    
+    print(f"Reload dataset from {path}")
+    ds_reloaded = xr.open_dataset(path, engine='zarr', chunks={})
+    return ds_reloaded
 
 def filter_inputs(
     da: xr.DataArray,
@@ -187,7 +202,10 @@ def weighted_coarsen(ds:xr.Dataset, dim: Mapping[Any, int],  weight_coord:str, t
     
     # and b) if the weights have nonzero values that do not match the variables (this would lead to additional area being counted below) 
     weights_test = weights<=0
-    if not np.allclose(variable_mask,weights_test):
+    
+    a = variable_mask.squeeze(drop=True)
+    b = weights_test.squeeze(drop=True)
+    if not np.allclose(a, b.transpose(*a.dims)): # need to transpose this, which too me still seems un xarray-like (I discussed this in an issue once, but whatever).
         raise ValueError(
             'Missing values in variables are not matching locations of <=0 values in weights array. ',
             'Please change your weights to only have missing values or zeros where variables have missing values.'

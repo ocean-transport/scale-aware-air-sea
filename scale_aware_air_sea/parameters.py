@@ -3,6 +3,7 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
     scratch = 'gs://leap-scratch/jbusecke'
     suffix = 'test' if test else ''
     n_coarsen = 50
+    project_path = f"scale-aware-air-sea"
     version_full = version+suffix
     global_params = {
         'filter_type':"gaussian",
@@ -11,19 +12,79 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
         'version': version_full,
         'paths':{
             model:{
-                'ice_mask' : f"{bucket}/scale-aware-air-sea/preprocessed/ice_mask_{model}_{version_full}.zarr",
-                'scratch': f"{scratch}/scale-aware-air-sea/temp/{model}_{version_full}.zarr",
-                'filter': f"{bucket}/scale-aware-air-sea/preprocessed/{model}_filter_{version_full}.zarr",
-                'coarse': f"{bucket}/scale-aware-air-sea/preprocessed/{model}_coarse_{n_coarsen}_{version_full}.zarr",
-                'filter_fluxes': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_{version_full}.zarr", 
-                'coarse_fluxes': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_{n_coarsen}_{version_full}.zarr",
-                'filter_decomposition_daily': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_daily_{version_full}.zarr",
-                'filter_decomposition_daily_appendix': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_daily_appendix_{version_full}.zarr",
-                'coarse_decomposition_daily': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_daily_{n_coarsen}_{version_full}.zarr",
-                'filter_decomposition_monthly': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_monthly_{version_full}.zarr",
-                'coarse_decomposition_monthly': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_monthly_{n_coarsen}_{version_full}.zarr",
-                'filter_decomposition_mean': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_filter_decomposed_mean_{version_full}.zarr",
-                'coarse_decomposition_mean': f"{bucket}/scale-aware-air-sea/results/{model}_fluxes_coarse_decomposed_mean_{n_coarsen}_{version_full}.zarr",
+                    'preprocessing':
+                        {
+                            'scratch': f"{scratch}/{project_path}/{version_full}/temp/{model}.zarr"
+                        },
+                    'smoothing':
+                        {
+                        'filter': f"{bucket}/{project_path}/{version_full}/smoothing/{model}_filter.zarr",
+                        'coarse': f"{bucket}/{project_path}/{version_full}/smoothing/{model}_coarse_{n_coarsen}.zarr",
+                        },
+                    'fluxes':
+                        {
+                        'filter':
+                         {
+                             'prod': f"{bucket}/{project_path}/{version_full}/fluxes/{model}_fluxes_filter_prod.zarr", 
+                             'appendix': f"{bucket}/{project_path}/{version_full}/fluxes/{model}_fluxes_filter_appendix.zarr",
+                         },
+                         'coarse':
+                         {
+                            'prod': f"{bucket}/{project_path}/{version_full}/fluxes/{model}_fluxes_coarse_{n_coarsen}_prod.zarr",
+                            'appendix': f"{bucket}/{project_path}/{version_full}/fluxes/{model}_fluxes_coarse_{n_coarsen}_appendix.zarr",
+                         },
+                         },
+                 'results':
+                 {
+                    'filter':{
+                         'native':{
+                             'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_prod.zarr",
+                             'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_appendix.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_all_terms.zarr",
+                         },
+                         'mean':{
+                             'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_prod.zarr",
+                             'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_appendix.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_all_terms.zarr",
+                         },
+                     
+                     },
+                     'coarse':{
+                         'native':{
+                             'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_native_prod_{n_coarsen}.zarr",
+                             'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_native_appendix_{n_coarsen}.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_native_all_terms.zarr",
+                         },
+                         'mean':{
+                             'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_mean_prod_{n_coarsen}.zarr",
+                             'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_mean_appendix_{n_coarsen}.zarr",
+                             'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_coarse_decomposed_mean_all_terms.zarr",
+                         },
+                     
+                     },
+                },
+                'plotting':
+                {
+                    'max_ice_mask': f"{bucket}/{project_path}/{version_full}/plotting/{model}_max_ice_mask.zarr",
+                    'full_fluxes':{ 
+                        k: {
+                            kk:f"{bucket}/{project_path}/{version_full}/plotting/{model}_full_flux_{k}_{kk}.zarr" for kk in ['global_mean', 'time_mean']
+                        } for k in ['online', 'offline']
+                    },
+#                     'filter':{
+#                          'native':{
+#                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_prod.zarr",
+#                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_appendix.zarr",
+#                              'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_native_all_terms.zarr",
+#                          },
+#                          'mean':{
+#                              'prod':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_prod.zarr",
+#                              'appendix':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_appendix.zarr",
+#                              'all_terms':f"{bucket}/{project_path}/{version_full}/results/{model}_fluxes_filter_decomposed_mean_all_terms.zarr",
+#                          },
+                     
+#                      },
+                },
             } for model in ['CM26','CESM']
         }
     }

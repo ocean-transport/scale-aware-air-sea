@@ -6,3 +6,7 @@ __pycache__
 *.egg-info
 *.mp4
 build/
+output.log
+scale_aware_air_sea/_version.py
+paper/figures
+paper/figures_submission
