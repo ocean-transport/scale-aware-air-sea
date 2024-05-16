@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "scale-aware-air-sea"
+name = "scale_aware_air_sea"
 dynamic = ["version"]
 authors = [
   { name="Julius Busecke", email="julius@ldeo.columbia.edu" },
@@ -42,7 +42,7 @@ test = [
 dev = [
     "ruff",
     "pre-commit",
-    "scale-aware-air-sea[test]"
+    "scale_aware_air_sea[test]"
 ]
 
 [project.urls]
