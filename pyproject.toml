@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "scale_aware_air_sea"
+name = "scale-aware-air-sea"
 dynamic = ["version"]
 authors = [
   { name="Julius Busecke", email="julius@ldeo.columbia.edu" },
@@ -31,7 +31,9 @@ dependencies = [
     "fsspec",
     "gcsfs",
     "intake-esm",
-    "matplotlib"
+    "matplotlib",
+    "gcm-filters",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
@@ -49,8 +51,8 @@ dev = [
 Homepage = "https://github.com/ocean-transport/scale-aware-air-sea"
 Tracker = "https://github.com/ocean-transport/scale-aware-air-sea/issues"
 
-[tool.setuptools.packages.find]
-where = ["scale_aware_air_sea"]
+[tool.setuptools]
+packages = ["scale_aware_air_sea"]
 
 [tool.setuptools_scm]
 write_to = "scale_aware_air_sea/_version.py"
