@@ -8,3 +8,5 @@ __pycache__
 build/
 output.log
 scale_aware_air_sea/_version.py
+paper/figures
+paper/figures_submission
