@@ -7,3 +7,4 @@ __pycache__
 *.mp4
 build/
 output.log
+scale_aware_air_sea/_version.py
