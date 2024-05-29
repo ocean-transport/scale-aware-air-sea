@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths: # only run on changes to the Dockerfile
+      - 'Dockerfile'
+    
 
 jobs:
   build-and-push:
