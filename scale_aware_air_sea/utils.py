@@ -35,17 +35,16 @@ def maybe_save_and_reload(
     to_zarr_split_kwargs.setdefault("split_dim", "time")
     to_zarr_split_kwargs.setdefault("split_interval", 1)
 
-    if not fs.exists(path):
-        print(f"Saving the dataset to zarr at {path}")
-    elif fs.exists(path) and overwrite:
-        print(f"Overwriting dataset at {path}")
-    elif fs.exists(path) and not overwrite:
-        raise ValueError(f"{path=} exists, and overwrite is deactivated")
-
-    if split:
-        to_zarr_split(ds, fs.get_mapper(path), **to_zarr_split_kwargs)
-    else:
-        ds.to_zarr(path, **to_zarr_kwargs)
+    if (not fs.exists(path)) or (fs.exists(path) and overwrite):
+        if not fs.exists(path):
+            print(f"Saving the dataset to zarr at {path}")
+        elif fs.exists(path) and overwrite:
+            print(f"Overwriting dataset at {path}")
+        
+        if split:
+            to_zarr_split(ds, fs.get_mapper(path), **to_zarr_split_kwargs)
+        else:
+            ds.to_zarr(path, **to_zarr_kwargs)
 
     print(f"Reload dataset from {path}")
 
