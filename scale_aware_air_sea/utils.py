@@ -23,7 +23,7 @@ def maybe_save_and_reload(ds, path, overwrite=False, fs=None, to_zarr_kwargs={},
     open_dataset_kwargs.setdefault('engine','zarr')
     open_dataset_kwargs.setdefault('chunks',{})
     
-    if overwrite
+    if overwrite:
         to_zarr_kwargs.setdefault('mode','w')
     
     if not fs.exists(path):
