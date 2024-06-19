@@ -14,7 +14,14 @@ def open_zarr(mapper, chunks={}):
 
 
 def maybe_save_and_reload(
-    ds, path, overwrite=False, fs=None, split=False, to_zarr_kwargs={}, open_dataset_kwargs={}, to_zarr_split_kwargs={}
+    ds,
+    path,
+    overwrite=False,
+    fs=None,
+    split=False,
+    to_zarr_kwargs={},
+    open_dataset_kwargs={},
+    to_zarr_split_kwargs={},
 ):
     if fs is None:
         fs = gcsfs.GCSFileSystem()
@@ -25,8 +32,8 @@ def maybe_save_and_reload(
     if overwrite:
         to_zarr_kwargs.setdefault("mode", "w")
 
-    to_zarr_split_kwargs.setdefault('split_dim','time')
-    to_zarr_split_kwargs.setdefault('split_interval',1)
+    to_zarr_split_kwargs.setdefault("split_dim", "time")
+    to_zarr_split_kwargs.setdefault("split_interval", 1)
 
     if not fs.exists(path):
         print(f"Saving the dataset to zarr at {path}")
@@ -36,7 +43,6 @@ def maybe_save_and_reload(
         raise ValueError(f"{path=} exists, and overwrite is deactivated")
 
     if split:
-        
         to_zarr_split(ds, fs.get_mapper(path), **to_zarr_split_kwargs)
     else:
         ds.to_zarr(path, **to_zarr_kwargs)
