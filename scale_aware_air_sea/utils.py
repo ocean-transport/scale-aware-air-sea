@@ -9,35 +9,34 @@ import gcsfs
 
 def open_zarr(mapper, chunks={}):
     return xr.open_dataset(
-        mapper, 
-        engine='zarr',
-        chunks=chunks,
-        consolidated=True,
-        inline_array=True
+        mapper, engine="zarr", chunks=chunks, consolidated=True, inline_array=True
     )
 
-def maybe_save_and_reload(ds, path, overwrite=False, fs=None, to_zarr_kwargs={}, open_dataset_kwargs={}):
+
+def maybe_save_and_reload(
+    ds, path, overwrite=False, fs=None, to_zarr_kwargs={}, open_dataset_kwargs={}
+):
     if fs is None:
         fs = gcsfs.GCSFileSystem()
 
-    open_dataset_kwargs.setdefault('engine','zarr')
-    open_dataset_kwargs.setdefault('chunks',{})
-    
+    open_dataset_kwargs.setdefault("engine", "zarr")
+    open_dataset_kwargs.setdefault("chunks", {})
+
     if overwrite:
-        to_zarr_kwargs.setdefault('mode','w')
-    
+        to_zarr_kwargs.setdefault("mode", "w")
+
     if not fs.exists(path):
-        print(f'Saving the dataset to zarr at {path}')
+        print(f"Saving the dataset to zarr at {path}")
         ds.to_zarr(path, **to_zarr_kwargs)
     elif fs.exists(path) and overwrite:
-        
-        print(f'Overwriting dataset at {path}')
+        print(f"Overwriting dataset at {path}")
         ds.to_zarr(path, **to_zarr_kwargs)
-    
+
     print(f"Reload dataset from {path}")
-    
+
     ds_reloaded = xr.open_dataset(path, **open_dataset_kwargs)
     return ds_reloaded
+
 
 def filter_inputs(
     da: xr.DataArray,
@@ -72,7 +71,7 @@ def filter_inputs(
             dx_min=1,
             filter_shape=gcm_filters.FilterShape.GAUSSIAN,
             grid_type=gcm_filters.GridType.TRIPOLAR_REGULAR_WITH_LAND_AREA_WEIGHTED,
-            grid_vars={"area":da.TAREA,"wet_mask": wet_mask},
+            grid_vars={"area": da.TAREA, "wet_mask": wet_mask},
         )
 
     else:
@@ -183,60 +182,75 @@ def to_zarr_split(ds, mapper, split_dim="time", split_interval=1):
     # what xr.to_zarr would do
     g = zarr.open_group(mapper)
     del g[split_dim]
-    
-    ds[[split_dim]].load().to_zarr(mapper, mode='a')
+
+    ds[[split_dim]].load().to_zarr(mapper, mode="a")
     zarr.consolidate_metadata(mapper)
-    
-def weighted_coarsen(ds:xr.Dataset, dim: Mapping[Any, int],  weight_coord:str, timedim='time', **kwargs) -> xr.Dataset:
-    
+
+
+def weighted_coarsen(
+    ds: xr.Dataset, dim: Mapping[Any, int], weight_coord: str, timedim="time", **kwargs
+) -> xr.Dataset:
     # Check that the weights have no missing values
     weights = ds[weight_coord]
-    if np.isnan(weights).sum()>0:
-        raise ValueError(f'Found missing values in weights coordinate ({weight_coord}). Please fill with zeros before.')
-        
-    # Make sure that the weights are matching the missing values in the input data 
+    if np.isnan(weights).sum() > 0:
+        raise ValueError(
+            f"Found missing values in weights coordinate ({weight_coord}). Please fill with zeros before."
+        )
+
+    # Make sure that the weights are matching the missing values in the input data
     # (otherwise creation of aggregated area will be ambigous and depend on each variable)
     # the important thing to check is if a) all variables have the same mask and
     variable_missing = np.isnan(ds.to_array())
-    
+
     if timedim in ds.dims:
-        variable_missing = variable_missing.isel({timedim:0})
-    
-    variable_mask = variable_missing.any('variable').load() # loading because we need it multiple times
-    variable_test = variable_missing.all('variable')
+        variable_missing = variable_missing.isel({timedim: 0})
+
+    variable_mask = variable_missing.any(
+        "variable"
+    ).load()  # loading because we need it multiple times
+    variable_test = variable_missing.all("variable")
     if not variable_mask.equals(variable_test):
-        raise ValueError('Found variables with non-matching missing values. ',
-                         'Make sure that the missing values in **all** variables are in the same position.')
-    
-    # and b) if the weights have nonzero values that do not match the variables (this would lead to additional area being counted below) 
-    weights_test = weights<=0
-    
+        raise ValueError(
+            "Found variables with non-matching missing values. ",
+            "Make sure that the missing values in **all** variables are in the same position.",
+        )
+
+    # and b) if the weights have nonzero values that do not match the variables (this would lead to additional area being counted below)
+    weights_test = weights <= 0
+
     a = variable_mask.squeeze(drop=True)
     b = weights_test.squeeze(drop=True)
-    if not np.allclose(a, b.transpose(*a.dims)): # need to transpose this, which too me still seems un xarray-like (I discussed this in an issue once, but whatever).
+    if not np.allclose(
+        a, b.transpose(*a.dims)
+    ):  # need to transpose this, which too me still seems un xarray-like (I discussed this in an issue once, but whatever).
         raise ValueError(
-            'Missing values in variables are not matching locations of <=0 values in weights array. ',
-            'Please change your weights to only have missing values or zeros where variables have missing values.'
+            "Missing values in variables are not matching locations of <=0 values in weights array. ",
+            "Please change your weights to only have missing values or zeros where variables have missing values.",
         )
-    
+
     # start the actual calculation
     ds_coarse = ds.coarsen(**dim, **kwargs)
     # construct internal/external dims
-    construct_kwargs = {di:(di+'_external', di+'_internal') for di in dim}
+    construct_kwargs = {di: (di + "_external", di + "_internal") for di in dim}
     ds_construct = ds_coarse.construct(**construct_kwargs)
-    
+
     # apply weighted mean over internal dimensions
     weights_coarse = ds_construct[weight_coord]
-    aggregate_dims = [di+'_internal' for di in dim]
+    aggregate_dims = [di + "_internal" for di in dim]
     ds_out = ds_construct.weighted(weights_coarse).mean(aggregate_dims)
-    
+
     # add new area that corresponds to the area that was used for each coarse cell
-    ds_out = ds_out.assign_coords(**{weight_coord:weights_coarse.sum(aggregate_dims)})
-    
+    ds_out = ds_out.assign_coords(**{weight_coord: weights_coarse.sum(aggregate_dims)})
+
     # add other coordinates back
-    coords_to_treat = [co for co in ds.coords if co != weight_coord and co not in ds_out.coords]
-    treated_coords = {co:ds[co].coarsen({k:v for k,v in dim.items() if k in ds[co].dims}).mean() for co in coords_to_treat}
+    coords_to_treat = [
+        co for co in ds.coords if co != weight_coord and co not in ds_out.coords
+    ]
+    treated_coords = {
+        co: ds[co].coarsen({k: v for k, v in dim.items() if k in ds[co].dims}).mean()
+        for co in coords_to_treat
+    }
     ds_out = ds_out.assign_coords(**treated_coords)
-    
+
     # rename to original names and return
-    return ds_out.rename({di+'_external': di for di in dim})
+    return ds_out.rename({di + "_external": di for di in dim})
