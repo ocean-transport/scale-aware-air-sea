@@ -10,7 +10,6 @@ dependencies:
   - fsspec
   - gcsfs
   - intake-esm
-  - intake-xarray
   - numpy
   - pip
   - pytest
