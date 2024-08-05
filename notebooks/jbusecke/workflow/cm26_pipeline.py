@@ -18,7 +18,7 @@ import gcsfs
 from dask.diagnostics import ProgressBar
 from cm26_utils import write_split_zarr, noskin_ds_wrapper
 
-# 👇 replace with your key 
+# 👇 replace with your key
 with open('/home/jovyan/keys/pangeo-forge-ocean-transport-4967-347e2048c5a1.json') as token_file:
     token = json.load(token_file)
 fs = gcsfs.GCSFileSystem(token=token)
@@ -87,7 +87,7 @@ ds_merged = ds_merged.isel(time=slice(100,140))
 
 ############################# wind cutting ##############
 # ok so lets not add nans into fields like above. Instead, lets see in which timesteps this actually occurs and for noe completely ignore these timesteps
-# This is not ideal in the long run, but maybe at least gives us a way to output 
+# This is not ideal in the long run, but maybe at least gives us a way to output
 
 # ds_cut = ds_merged.isel(time=slice(0,500))
 # wind = ds_cut.wind
@@ -96,7 +96,7 @@ wind = ds_merged.wind
 threshold = 30
 with ProgressBar():
     strong_wind_cells = (wind > threshold).sum(['xt_ocean','yt_ocean']).load()
-    
+
 strong_wind_index = strong_wind_cells > 0
 
 # double check that these events are still rare in space and time
@@ -121,6 +121,6 @@ overwrite = True
 if fs.exists(path) and overwrite:
 # # # delete the mapper (only uncomment if you want to start from scratch!)
     print("DELETE existing store")
-    fs.rm(path, recursive=True)    
+    fs.rm(path, recursive=True)
 
 write_split_zarr(mapper, ds_out, split_interval=64)
