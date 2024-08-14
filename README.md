@@ -14,7 +14,7 @@ pip install .
 ```
 
 ### Custom Docker image
-The science published from the repository is using a custom Docker image (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)). 
+The science published from the repository is using a [custom Docker image](/Dockerfile) (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)). 
 You can find the image on [quay.io](https://quay.io/repository/jbusecke/scale-aware-air-sea?tab=tags) and refer to specific tags used in the notebooks in `./pipeline`.
 
 ### How to develop this package
