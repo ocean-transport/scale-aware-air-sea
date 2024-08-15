@@ -17,14 +17,13 @@ pip install .
 The science published from the repository is using a [custom Docker image](/Dockerfile) (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)). 
 You can find the image on [quay.io](https://quay.io/repository/jbusecke/scale-aware-air-sea?tab=tags) and refer to specific tags used in the notebooks in `./pipeline`.
 
-E.g. for tag `68b654d76dce`:
-
-<img width="687" alt="image" src="https://github.com/user-attachments/assets/c87ad92b-708d-452f-bd1e-c5b48adb51cc">
-
-
 #### Pulling custom image on LEAP-Pangeo Jupyterhub
 To work with the custom image on the LEAP-Pangeo Jupyterhub, just follow the instructions to use a [custom image](), and enter `quay.io/jbusecke/scale-aware-air-sea:<tag>`, where you replace tag with the relevant version tag. 
 
+
+E.g. for tag `68b654d76dce`:
+
+<img width="687" alt="image" src="https://github.com/user-attachments/assets/c87ad92b-708d-452f-bd1e-c5b48adb51cc">
 
 
 ### How to develop this package
