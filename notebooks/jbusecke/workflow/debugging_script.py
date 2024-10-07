@@ -4,7 +4,7 @@ from aerobulk import noskin
 def noskin_ds_wrapper(ds_in):
     ds_out = xr.Dataset()
     ds_in = ds_in.copy(deep=False)
-    
+
     sst = ds_in.surface_temp + 273.15
     t_zt = ds_in.t_ref
     hum_zt = ds_in.q_ref
@@ -13,7 +13,7 @@ def noskin_ds_wrapper(ds_in):
     slp = ds_in.slp * 100 # check this
     zu = 10
     zt = 2
-    
+
     ql, qh, taux, tauy, evap =  noskin(
         sst,
         t_zt,
@@ -28,7 +28,7 @@ def noskin_ds_wrapper(ds_in):
     ds_out['ql'] = ql
     ds_out['qh'] = qh
     ds_out['evap'] = evap
-    ds_out['taux'] = taux 
+    ds_out['taux'] = taux
     ds_out['tauy'] = tauy
     return ds_out
 
