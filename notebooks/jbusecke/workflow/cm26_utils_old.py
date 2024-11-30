@@ -11,15 +11,15 @@ def write_split_zarr(store, ds, split_dim='time', chunks=1, split_interval=180):
     This can be helpful to e.g. avoid problems with overly eager dask schedulers
     """
     # Got my inspiration for this mostly here: https://github.com/pydata/xarray/issues/6069
-    
+
     # determine the variables and coordinates that depend on the split_dim
     other_dims = [di for di in ds.dims if di != split_dim]
     split_vars_coords = [va for va in ds.variables if split_dim in ds[va].dims and va not in ds.dims]
     non_split_vars_coords = [va for va in ds.variables if va not in split_vars_coords and va not in ds.dims]
-    
+
     # Generate a stripped dataset that only contains variables/coordinates that do not depend on `split_dim`
     ds_stripped = ds.drop_vars(split_vars_coords+[split_dim])
-        
+
     # initialize the store without writing values
     print('initializing store')
     ds.to_zarr(
@@ -28,15 +28,15 @@ def write_split_zarr(store, ds, split_dim='time', chunks=1, split_interval=180):
         encoding={split_dim:{"chunks":[chunks]}},
         consolidated=True, # TODO: Not sure if this is proper. Might have to consolidate the whole thing as a last step?
     )
-    
+
     # Write out only the non-split variables/coordinates
     if len(non_split_vars_coords) > 0:
         print('Writing coordinates')
         ds_stripped.to_zarr(store, mode='a') #I guess a is 'add'. This is honestly not clear enough in the xarray docs.
-        # with `w` there are issues with the shape. 
-    
+        # with `w` there are issues with the shape.
+
     # TODO: what about the attrs?
-    
+
     # Populate split chunks as regions
     n = len(ds[split_dim])
     splits = list(range(0,n,split_interval))
@@ -44,29 +44,29 @@ def write_split_zarr(store, ds, split_dim='time', chunks=1, split_interval=180):
     # Make sure the last item in the list covers the full length of the time on our dataset
     if splits[-1] != n:
         splits = splits + [n]
-    
+
     for ii in tqdm(range(len(splits)-1)):
         print(f'Writing split {ii}')
         # TODO: put some retry logic in here...
         start = splits[ii]
         stop = splits[ii+1]
-        
+
         ds_write = ds.isel({split_dim:slice(start, stop)})
         print(f'Start: {ds_write[split_dim][0].data}')
         print(f'Stop: {ds_write[split_dim][-1].data}')
-        
+
         # strip everything except the values
         drop_vars = non_split_vars_coords+other_dims
         ds_write = ds_write.drop_vars(drop_vars)
-        
+
         with ProgressBar():
             ds_write.to_zarr(store, region={split_dim:slice(start, stop)}, mode='a')#why are the variables not instantiated in the init step
-            
-# TODO: This is model agnostic and should live somewhere else?         
+
+# TODO: This is model agnostic and should live somewhere else?
 def noskin_ds_wrapper(ds_in, algo='ecmwf', **kwargs):
     ds_out = xr.Dataset()
     ds_in = ds_in.copy(deep=False)
-    
+
     sst = ds_in.surface_temp + 273.15
     t_zt = ds_in.t_ref
     hum_zt = ds_in.q_ref
@@ -75,7 +75,7 @@ def noskin_ds_wrapper(ds_in, algo='ecmwf', **kwargs):
     slp = ds_in.slp * 100 # check this
     zu = 10
     zt = 2
-    
+
     ql, qh, taux, tauy, evap =  noskin(
         sst,
         t_zt,
@@ -91,7 +91,7 @@ def noskin_ds_wrapper(ds_in, algo='ecmwf', **kwargs):
     ds_out['ql'] = ql
     ds_out['qh'] = qh
     ds_out['evap'] = evap
-    ds_out['taux'] = taux 
+    ds_out['taux'] = taux
     ds_out['tauy'] = tauy
     return ds_out
 
@@ -114,7 +114,7 @@ def load_and_merge_cm26(regridder_token):
     )
     # instead do this
     ds_atmos = ds_atmos.chunk({'time':1})
-    
+
     fs = gcsfs.GCSFileSystem(token=regridder_token)
     path = 'ocean-transport-group/scale-aware-air-sea/regridding_weights/CM26_atmos2ocean.zarr'
     mapper = fs.get_mapper(path)
