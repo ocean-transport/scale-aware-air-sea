@@ -12,4 +12,3 @@ ds  = cat["GFDL_CM2_6_control_ocean_surface"].to_dask()
 ds_atmos = xr.open_zarr('gs://cmip6/GFDL_CM2_6/control/atmos_daily.zarr', **kwargs)
 
 regridder = xe.Regridder(ds_atmos.olr.isel(time=0), ds.surface_temp.isel(time=0), 'bilinear', periodic=True) # all the atmos data is on the cell center AFAIK
-
