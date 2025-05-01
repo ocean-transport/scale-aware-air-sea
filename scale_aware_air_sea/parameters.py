@@ -72,14 +72,20 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
                             kk:f"{bucket}/{version_full}/plotting/{model}_full_flux_{k}_{kk}.zarr" for kk in ['global_mean', 'time_mean']
                         } for k in ['online', 'offline']
                     },
+                    'histogram':{
+                        var : f"{bucket}/{version_full}/plotting/{model}_histogram_{var}.zarr" for var in ['q_total', 'ql', 'qh']
+                    },
                 },
                 'plotting_pub':
                 {
                     'max_ice_mask': f"{bucket_pub}/{version_full}/plotting/{model}_max_ice_mask.zarr",
                     'full_fluxes':{ 
                         k: {
-                            kk:f"{bucket}/{version_full}/plotting/{model}_full_flux_{k}_{kk}.zarr" for kk in ['global_mean', 'time_mean']
+                            kk:f"{bucket_pub}/{version_full}/plotting/{model}_full_flux_{k}_{kk}.zarr" for kk in ['global_mean', 'time_mean']
                         } for k in ['online', 'offline']
+                    },
+                    'histogram':{
+                        var : f"{bucket_pub}/{version_full}/plotting/{model}_histogram_{var}.zarr" for var in ['q_total', 'ql', 'qh']
                     },
                 },
             } for model in ['CM26','CESM']
