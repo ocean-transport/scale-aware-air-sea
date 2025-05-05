@@ -14,11 +14,11 @@ pip install .
 ```
 
 ### Custom Docker image
-The science published from the repository is using a [custom Docker image](/Dockerfile) (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)). 
+The science published from the repository is using a [custom Docker image](/Dockerfile) (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)).
 You can find the image on [quay.io](https://quay.io/repository/jbusecke/scale-aware-air-sea?tab=tags) and refer to specific tags used in the notebooks in `./pipeline`.
 
 #### Pulling custom image on LEAP-Pangeo Jupyterhub
-To work with the custom image on the LEAP-Pangeo Jupyterhub, just follow the instructions to use a [custom image](), and enter `quay.io/jbusecke/scale-aware-air-sea:<tag>`, where you replace tag with the relevant version tag. 
+To work with the custom image on the LEAP-Pangeo Jupyterhub, just follow the instructions to use a [custom image](), and enter `quay.io/jbusecke/scale-aware-air-sea:<tag>`, where you replace tag with the relevant version tag.
 
 
 E.g. for tag `68b654d76dce`:
@@ -35,7 +35,7 @@ pip install -e ".[dev]"
 ## Publications
 
 ### Busecke and Balwada et al. GRL (in revision)
-In order to produce the intermediate and plotting data you have to run the `pipeline/full_processing.ipynb` notebook. 
+In order to produce the intermediate and plotting data you have to run the `pipeline/full_processing.ipynb` notebook.
 
 >[!WARNING]
 >Running this processing will take conciderable resources and time, and some of the data is only available as requester-pays.
