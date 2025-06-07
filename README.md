@@ -53,3 +53,12 @@ To reproduce the results from the 2025 GRL Paper **exactly**, check out the code
 
 >![WARN]
 > Even the picture processing is fairly slow. Be prepared to take a coffee break if you are running this on a smaller laptop.
+=======
+
+### Busecke and Balwada et al. GRL (in revision)
+In order to produce the intermediate and plotting data you have to run the `pipeline/full_processing.ipynb` notebook. 
+
+>[!WARNING]
+>Running this processing will take conciderable resources and time, and some of the data is only available as requester-pays.
+
+To reproduce/modify the plots only we will make the data available on egress free public cloud storage once the paper is published.
