@@ -53,14 +53,5 @@ All aggregated data used for plotting is available on the [M²LInES](https://m2l
 
 To reproduce the results from the 2025 GRL Paper **exactly**, check out the code at the `v1.1.0` tag (which corresponds to the final code+figures after revision), and run the `paper/full_plots-submission.ipynb` notebook within the `quay.io/jbusecke/scale-aware-air-sea:68b654d76dce` docker image (find some guidance how to do this locally [here](https://juliusbusecke.com/blog/posts/pangeo-docker-local/) or follow the advice for a 2i2c JupyterHub below).
 
->![WARN]
-> Even the picture processing is fairly slow. Be prepared to take a coffee break if you are running this on a smaller laptop.
-=======
-
-### Busecke and Balwada et al. GRL (in revision)
-In order to produce the intermediate and plotting data you have to run the `pipeline/full_processing.ipynb` notebook.
-
 >[!WARNING]
->Running this processing will take conciderable resources and time, and some of the data is only available as requester-pays.
-
-To reproduce/modify the plots only we will make the data available on egress free public cloud storage once the paper is published.
+> Even the picture processing is fairly slow. Be prepared to take a coffee break if you are running this on a smaller laptop.
