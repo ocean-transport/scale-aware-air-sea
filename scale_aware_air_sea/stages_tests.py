@@ -62,6 +62,7 @@ def test_data_preprocessing(ds: xr.Dataset, full_check=False):
     b = np.isnan(ds.isel(time=0, drop=True).to_array()).all("variable").load()
     xr.testing.assert_allclose(a, b)
 
+
 def test_smoothed_data(ds_raw, ds, plot=False, full_check=False):
     _test_timesteps(ds)
     assert "smoothing_method" in ds.attrs.keys()
