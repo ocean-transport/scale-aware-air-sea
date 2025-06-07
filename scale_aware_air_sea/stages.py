@@ -156,7 +156,11 @@ def construct_ice_mask(ds: xr.Dataset) -> xr.DataArray:
 
 
 def preprocess(
-    fs: gcsfs.GCSFileSystem, model: str, include_fluxes: bool = False
+    fs: gcsfs.GCSFileSystem,
+    model: str,
+    include_fluxes: bool = False,
+    drop_coords: bool = True,
+    compute_ice_mask: bool = True,
 ) -> xr.Dataset:
     # loading data
     print(f"{model}: Loading Data")
@@ -177,7 +181,8 @@ def preprocess(
         exclude=(di for di in all_dims if di != "time"),
     )
 
-    ds_ocean.coords["ice_mask"] = construct_ice_mask(ds_ocean)
+    if compute_ice_mask:
+        ds_ocean.coords["ice_mask"] = construct_ice_mask(ds_ocean)
 
     # regrid atmospheric data
     print(
@@ -218,9 +223,10 @@ def preprocess(
     ds_combined["v_relative"] = ds_combined["v_ref"] - ds_combined["v_ocean"]
 
     # Drop coordinates
-    print(f"{model}: Drop extra coords")
-    keep_coords = ["time", "geolon_t", "geolat_t", "area_t", "ice_mask"]
-    ds_combined = ds_combined.drop(
-        [co for co in ds_combined.coords if co not in keep_coords]
-    )
+    if drop_coords:
+        print(f"{model}: Drop extra coords")
+        keep_coords = ["time", "geolon_t", "geolat_t", "area_t", "ice_mask"]
+        ds_combined = ds_combined.drop(
+            [co for co in ds_combined.coords if co not in keep_coords]
+        )
     return ds_combined

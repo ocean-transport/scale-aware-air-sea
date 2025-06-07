@@ -3,9 +3,7 @@ import numpy as np
 import xarray as xr
 import xesmf as xe
 
-kwargs = dict(
-    consolidated=True, use_cftime=True, inline_array=inline_array, engine="zarr"
-)
+kwargs = dict(consolidated=True, use_cftime=True, inline_array=True, engine="zarr")
 
 
 def _load_oc_grid(filesystem: gcsfs.GCSFileSystem) -> xr.Dataset:

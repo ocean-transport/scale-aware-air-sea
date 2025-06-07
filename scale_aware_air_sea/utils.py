@@ -112,7 +112,7 @@ def filter_inputs_dataset(
 def scale_separation(ds, filter_scale, mask):
     ds_filtered = filter_inputs_dataset(ds, ["yt_ocean", "xt_ocean"], filter_scale)
 
-    all_filtering_options_except_full = [
+    all_smoothing_options_except_full = [
         s for s in ds.filtering.data if "full" not in s
     ]
 
