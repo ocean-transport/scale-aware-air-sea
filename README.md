@@ -49,7 +49,7 @@ The raw data is available as a mix of egress-free and requesters pays data (see 
 All aggregated data used for plotting is available on the [M²LInES](https://m2lines.github.io/) funded [Open Storage Network Pod](https://leap-stc.github.io/reference/infrastructure.html?highlight=m2lines#m2lines-osn-pod) in egress free object storage at `https://nyu1.osn.mghpcc.org/leap-pubs/busecke_balwada_et_al_GRL/v1.0.1/plotting`.
 
 ### Reproduce Results
-To reproduce the results from the 2025 GRL Paper **exactly**, check out the code at the `v1.1.0` tag, and run the `paper/full_plots-submission.ipynb` notebook within the `quay.io/jbusecke/scale-aware-air-sea:68b654d76dce` docker image (find some guidance how to do this locally [here](https://juliusbusecke.com/blog/posts/pangeo-docker-local/) or follow the advice for a 2i2c JupyterHub below).
+To reproduce the results from the 2025 GRL Paper **exactly**, check out the code at the `v1.1.0` tag (which corresponds to the final code+figures after revision), and run the `paper/full_plots-submission.ipynb` notebook within the `quay.io/jbusecke/scale-aware-air-sea:68b654d76dce` docker image (find some guidance how to do this locally [here](https://juliusbusecke.com/blog/posts/pangeo-docker-local/) or follow the advice for a 2i2c JupyterHub below).
 
 >![WARN]
-> Even the picture processing is fairly resource intensive. Be prepared to take a coffee break if you are running this on a smaller laptop.
+> Even the picture processing is fairly slow. Be prepared to take a coffee break if you are running this on a smaller laptop.

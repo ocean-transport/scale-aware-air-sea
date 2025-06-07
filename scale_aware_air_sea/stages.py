@@ -148,7 +148,12 @@ def construct_ice_mask(ds:xr.Dataset) -> xr.DataArray:
     # But the computation is super gnarly (see pipeline/step_00_ice_mask_brute_force_cm2.6.ipynb).
     return ds.surface_temp > 273.15
     
-def preprocess(fs: gcsfs.GCSFileSystem, model:str, include_fluxes:bool=False) -> xr.Dataset:
+def preprocess(
+    fs: gcsfs.GCSFileSystem, 
+    model:str, 
+    include_fluxes:bool=False,
+    drop_coords:bool=True,
+    compute_ice_mask:bool=True) -> xr.Dataset:
     # loading data
     print(f"{model}: Loading Data")
     if model == 'CM26':
@@ -168,7 +173,8 @@ def preprocess(fs: gcsfs.GCSFileSystem, model:str, include_fluxes:bool=False) ->
         exclude=(di for di in all_dims if di != "time"),
     )
     
-    ds_ocean.coords['ice_mask'] = construct_ice_mask(ds_ocean)
+    if compute_ice_mask:
+        ds_ocean.coords['ice_mask'] = construct_ice_mask(ds_ocean)
     
     # regrid atmospheric data
     print(f"{model}: Regridding atmosphere (this takes a while, because we are computing the weights on the fly)")
@@ -207,7 +213,8 @@ def preprocess(fs: gcsfs.GCSFileSystem, model:str, include_fluxes:bool=False) ->
     ds_combined["v_relative"] = ds_combined["v_ref"] - ds_combined["v_ocean"]
     
     # Drop coordinates
-    print(f"{model}: Drop extra coords")
-    keep_coords = ['time', 'geolon_t', 'geolat_t', 'area_t', 'ice_mask']
-    ds_combined = ds_combined.drop([co for co in ds_combined.coords if co not in keep_coords])
+    if drop_coords:
+        print(f"{model}: Drop extra coords")
+        keep_coords = ['time', 'geolon_t', 'geolat_t', 'area_t', 'ice_mask']
+        ds_combined = ds_combined.drop([co for co in ds_combined.coords if co not in keep_coords])
     return ds_combined

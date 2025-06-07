@@ -64,6 +64,35 @@ def get_params(version:str, test:bool=True) -> dict[str, str]:
                      
                      },
                 },
+                'results_pub': # I made a mistake in https://github.com/issues/created?issue=leap-stc%7Cdata-management%7C212 so these files are all in the 'plotting' subfolder...
+                 {
+                    'filter':{
+                         'native':{
+                             'prod':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_filter_decomposed_native_prod.zarr",
+                             'appendix':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_filter_decomposed_native_appendix.zarr",
+                             'all_terms':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_filter_decomposed_native_all_terms.zarr",
+                         },
+                         'mean':{
+                             'prod':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_filter_decomposed_mean_prod.zarr",
+                             'appendix':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_filter_decomposed_mean_appendix.zarr",
+                             'all_terms':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_filter_decomposed_mean_all_terms.zarr",
+                         },
+                     
+                     },
+                     'coarse':{
+                         'native':{
+                             'prod':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_coarse_decomposed_native_prod_{n_coarsen}.zarr",
+                             'appendix':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_coarse_decomposed_native_appendix_{n_coarsen}.zarr",
+                             'all_terms':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_coarse_decomposed_native_all_terms.zarr",
+                         },
+                         'mean':{
+                             'prod':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_coarse_decomposed_mean_prod_{n_coarsen}.zarr",
+                             'appendix':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_coarse_decomposed_mean_appendix_{n_coarsen}.zarr",
+                             'all_terms':f"{bucket_pub}/{version_full}/plotting/{model}_fluxes_coarse_decomposed_mean_all_terms.zarr",
+                         },
+                     
+                     },
+                },
                 'plotting':
                 {
                     'max_ice_mask': f"{bucket}/{version_full}/plotting/{model}_max_ice_mask.zarr",
