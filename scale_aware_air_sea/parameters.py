@@ -1,9 +1,9 @@
 def get_params(version: str, test: bool = True) -> dict[str, str]:
-    bucket = "gs://leap-persistent/jbusecke"  # equivalent to os.environ['PERSISTENT_BUCKET'], but this should work for all collaborators
+    bucket = "scale-aware-air-sea/jbusecke"  # equivalent to os.environ['PERSISTENT_BUCKET'], but this should work for all collaborators
+    bucket_pub = "leap-pubs/busecke_balwada_et_al_GRL"
     scratch = "gs://leap-scratch/jbusecke"
     suffix = "test" if test else ""
     n_coarsen = 50
-    project_path = "scale-aware-air-sea"
     version_full = version + suffix
     global_params = {
         "filter_type": "gaussian",
