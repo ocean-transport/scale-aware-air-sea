@@ -95,7 +95,7 @@ def test_smoothed_data(ds_raw, ds, plot=False, full_check=False):
             plt.figure()
             raw_test.plot(label="raw", ls="-")
             test.plot(label="coarse", ls=":")
-            plt.title(f"Global weighted {test_var} average {model}")
+            plt.title(f"Global weighted {test_var} average")
             plt.legend()
             plt.show()
         xr.testing.assert_allclose(raw_test, test)
