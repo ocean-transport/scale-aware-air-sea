@@ -28,7 +28,7 @@ print('Use the main module for this')
 #             mask_da = da.isel({timedim:0})
 #         else:
 #             mask_da = da
-            
+
 #         wet_mask = (~np.isnan(mask_da)).astype(int)
 #         ds_out[var] = smooth_inputs(da, wet_mask, dims, filter_scale)
 #     return ds_out
@@ -39,19 +39,19 @@ print('Use the main module for this')
 #         ['yt_ocean', 'xt_ocean'],
 #         filter_scale
 #     )
-    
+
 #     all_smoothing_options_except_full = [s for s in ds.smoothing.data if 'full' not in s]
-    
-    
+
+
 #     diff_filtered = ds_filtered.sel(smoothing='smooth_full')-ds_filtered.sel(smoothing=all_smoothing_options_except_full)
 #     diff_unfiltered = ds_filtered.sel(smoothing='smooth_full')-ds.sel(smoothing=all_smoothing_options_except_full)
-    
+
 #     # assigne scale datasets
 #     ds_full=ds_filtered.sel(smoothing='smooth_full')
-    
+
 #     ds_large_scale = ds_filtered.sel(smoothing='smooth_all')
-    
-    
+
+
 #     ds_small_scale = xr.concat(
 #         [
 #             diff_unfiltered.sel(smoothing='smooth_all'), # the main result,
@@ -59,10 +59,10 @@ print('Use the main module for this')
 #         ],
 #         dim='smoothing'
 #     )
-    
+
 #     # mask the outputs
 #     ds_full = ds_full.where(mask)
 #     ds_large_scale = ds_large_scale.where(mask)
 #     ds_small_scale = ds_small_scale.where(mask)
-    
+
 #     return ds_full, ds_large_scale, ds_small_scale

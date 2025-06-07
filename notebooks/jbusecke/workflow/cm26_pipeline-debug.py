@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # Debug issues with exceeding wind stress
-# 
+#
 # ## Tasks
 # - Find timestep(s) that exhibit the behavior
 # - Confirm that this behavior only affects certain algorithms
@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 from dask.diagnostics import ProgressBar
 from cm26_utils import write_split_zarr, noskin_ds_wrapper, load_and_merge_cm26
 
-# 👇 replace with your key 
+# 👇 replace with your key
 with open('/home/jovyan/keys/pangeo-forge-ocean-transport-4967-347e2048c5a1.json') as token_file:
     token = json.load(token_file)
 
@@ -63,7 +63,7 @@ ds_merged = ds_merged.isel(time=slice(90, 130))
 # I did `jupyter nbconvert --to python cm26_pipeline-debug.ipynb`
 # and then I get the error about the wind stress.
 
-# I have executed this with all algos and I get crashes for: 
+# I have executed this with all algos and I get crashes for:
 # 'coare3p6'
 # 'andreas'
 # 'coare3p0'
@@ -87,7 +87,7 @@ with ProgressBar():
 
 
 # ## Investigate the max windstress values we are getting with the working algos
-# 
+#
 # Is there a correlation betweewn max wind speeds and stresses? Yeah definitely!
 
 # In[ ]:
@@ -118,8 +118,8 @@ plt.grid()
 
 # ## Ok can we actually get around this and get some results at all?
 # If not we need to raise the tau cut of in aerobulk.
-# 
-# My simple approach right here is to set every wind value larger than `threshold` to zero. This is not a feasible solution for our processing, but I just want to see how low we have to go to get all algos to go through! 
+#
+# My simple approach right here is to set every wind value larger than `threshold` to zero. This is not a feasible solution for our processing, but I just want to see how low we have to go to get all algos to go through!
 
 # In[ ]:
 
@@ -133,7 +133,7 @@ for algo in failing_algos:
     mask = ds_masked.wind>threshold
     ds_masked['u_ref'] = ds_masked['u_ref'].where(mask, 0)
     ds_masked['v_ref'] = ds_masked['v_ref'].where(mask, 0)
-    
+
     break
     ds_out = noskin_ds_wrapper(ds_merged, algo=algo, input_range_check=False)
     with ProgressBar():
@@ -143,4 +143,3 @@ for algo in failing_algos:
     stress_max = stress.max(['xt_ocean', 'yt_ocean']).assign_coords(algo=algo)
     print(stress_max)
     datasets.append(stress_max)
-
