@@ -4,7 +4,6 @@ def get_params(version: str, test: bool = True) -> dict[str, str]:
     scratch = "gs://leap-scratch/jbusecke"
     suffix = "test" if test else ""
     n_coarsen = 50
-    project_path = "scale-aware-air-sea"
     version_full = version + suffix
     global_params = {
         "filter_type": "gaussian",
