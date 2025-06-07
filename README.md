@@ -1,6 +1,6 @@
 # scale-aware-air-sea
 This repository is both an installable package, and a collection of issues/notebooks that document the work done in the ocean-transport group and beyond.
-The goal of this project is to quantify the rectified effect of small scale heterogeneity in the atmophere and ocean on the air-sea fluxes computed via bulk formulae. See [below](#publications) for relevant publications. 
+The goal of this project is to quantify the rectified effect of small scale heterogeneity in the atmophere and ocean on the air-sea fluxes computed via bulk formulae. See [below](#publications) for relevant publications.
 
 
 ## Quickstart
@@ -12,11 +12,11 @@ pip install .
 ```
 
 ### Custom Docker image
-The science published from the repository is using a [custom Docker image](/Dockerfile) (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)). 
+The science published from the repository is using a [custom Docker image](/Dockerfile) (installing additional dependencies on top of the [pangeo docker image](https://github.com/pangeo-data/pangeo-docker-images)).
 You can find the image on [quay.io](https://quay.io/repository/jbusecke/scale-aware-air-sea?tab=tags) and refer to specific tags used in the notebooks in `./pipeline`.
 
 #### Pulling custom image on LEAP-Pangeo Jupyterhub
-To work with the custom image on the LEAP-Pangeo Jupyterhub, just follow the instructions to use a [custom image](), and enter `quay.io/jbusecke/scale-aware-air-sea:<tag>`, where you replace tag with the relevant version tag. 
+To work with the custom image on the LEAP-Pangeo Jupyterhub, just follow the instructions to use a [custom image](), and enter `quay.io/jbusecke/scale-aware-air-sea:<tag>`, where you replace tag with the relevant version tag.
 
 
 E.g. for tag `68b654d76dce`:
@@ -41,7 +41,7 @@ pip install -e ".[dev]"
 ├── pipeline [Raw processing code (smoothing + offline flux computation)]
 ├── scale_aware_air_sea [installable software package]
 ```
-> Ommited folders are either part of the installable package, or testing notebooks and other non relevant code. 
+> Ommited folders are either part of the installable package, or testing notebooks and other non relevant code.
 
 ### Data Availability
 The raw data is available as a mix of egress-free and requesters pays data (see `scale-aware-air-sea/stages.py` for detailed paths).
@@ -56,7 +56,7 @@ To reproduce the results from the 2025 GRL Paper **exactly**, check out the code
 =======
 
 ### Busecke and Balwada et al. GRL (in revision)
-In order to produce the intermediate and plotting data you have to run the `pipeline/full_processing.ipynb` notebook. 
+In order to produce the intermediate and plotting data you have to run the `pipeline/full_processing.ipynb` notebook.
 
 >[!WARNING]
 >Running this processing will take conciderable resources and time, and some of the data is only available as requester-pays.
