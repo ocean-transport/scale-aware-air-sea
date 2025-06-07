@@ -4,7 +4,7 @@ import xarray as xr
 import xesmf as xe
 
 kwargs = dict(
-    consolidated=True, use_cftime=True, inline_array=inline_array, engine="zarr"
+    consolidated=True, use_cftime=True, inline_array=True, engine="zarr"
 )
 
 
