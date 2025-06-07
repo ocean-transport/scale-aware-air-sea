@@ -6,6 +6,7 @@ import xesmf as xe
 kwargs = dict(consolidated=True, use_cftime=True, inline_array=True, engine="zarr")
 
 
+
 def _load_oc_grid(filesystem: gcsfs.GCSFileSystem) -> xr.Dataset:
     mapper = filesystem.get_mapper("gs://cmip6/GFDL_CM2_6/grid")
     ds_oc_grid = xr.open_dataset(mapper, chunks={}, **kwargs)
