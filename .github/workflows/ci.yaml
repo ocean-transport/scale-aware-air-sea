@@ -30,14 +30,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create conda environment
-        uses: mamba-org/provision-with-micromamba@main
+        uses: mamba-org/setup-micromamba@v2
         with:
-          cache-downloads: true
-          cache-env: true
-          micromamba-version: 'latest'
-          environment-file: ci/environment.yaml
-          extra-specs: |
+          environment-file: ci/environment.yml
+          create-args: >-
             python=${{ matrix.python-version }}
+          post-cleanup: 'all'
+          cache-environment: true
+          cache-downloads: true
       - name: Install SAAS
         run: |
           python -m pip install -e . --no-deps
