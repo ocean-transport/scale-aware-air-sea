@@ -1,5 +1,7 @@
 import xarray as xr
 import random
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def _test_timesteps(ds: xr.Dataset):
@@ -59,11 +61,6 @@ def test_data_preprocessing(ds: xr.Dataset, full_check=False):
     a = np.isnan(ds.surface_temp.isel(time=0, drop=True)).load()
     b = np.isnan(ds.isel(time=0, drop=True).to_array()).all("variable").load()
     xr.testing.assert_allclose(a, b)
-
-
-import matplotlib.pyplot as plt
-import numpy as np
-
 
 def test_smoothed_data(ds_raw, ds, plot=False, full_check=False):
     _test_timesteps(ds)
